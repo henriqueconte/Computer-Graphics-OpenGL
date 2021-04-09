@@ -274,7 +274,7 @@ int main(int argc, char* argv[])
     // Carregamos duas imagens para serem utilizadas como textura
     LoadTextureImage("../../data/groundTexture.jpg");      // TextureImage0
     LoadTextureImage("../../data/tc-earth_nightmap_citylights.gif"); // TextureImage1
-    LoadTextureImage("../../data/shrekClothes.png"); // TextureImage2
+    LoadTextureImage("../../data/shrekshirt.JPG"); // TextureImage2
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel spheremodel("../../data/sphere.obj");
@@ -422,8 +422,8 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, PLANE);
         DrawVirtualObject("plane");
 
-        model = Matrix_Translate(3.0f,0.0,0.0f)
-                * Matrix_Scale(2.0f, 2.0f, 1.0f);
+        model = Matrix_Translate(3.0f,0.0f,0.0f)
+                * Matrix_Scale(1.5f, 1.5f, 1.5f);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, SHREK);
         DrawVirtualObject("shrek");

@@ -129,6 +129,8 @@ void main()
         Kd = texture(TextureImage0, vec2(U,V)).rgb;
 
     } else if (object_id == SHREK) {
+
+
         float minx = bbox_min.x;
         float maxx = bbox_max.x;
 
@@ -140,18 +142,29 @@ void main()
 
         U = (position_model.x - bbox_min.x) / (bbox_max.x - bbox_min.x);
         V = (position_model.y - bbox_min.y) / (bbox_max.y - bbox_min.y);
-        //Kd = texture(TextureImage3, vec2(U,V)).rgb
         Kd = texture(TextureImage2, vec2(U,V)).rgb;
+
+        /*
+        vec4 bbox_center = (bbox_min + bbox_max) / 2.0;
+        vec4 direction = position_model - bbox_center;
+
+        float theta = atan(direction.x, direction.z);
+        float phi = asin(direction.y / length(direction));
+
+        U = 0.5f + (theta / (2 * M_PI));
+        V = 0.5f + (phi / M_PI);
+        Kd = texture(TextureImage2, vec2(U,V)).rgb;
+        */
     }
 
     // Obtemos a refletância difusa a partir da leitura da imagem TextureImage0
 
-    vec3 KdLights = texture(TextureImage1, vec2(U,V)).rgb;
+
 
     // Equação de Iluminação
     float lambert = max(0,dot(n,l));
 
-    color = Kd * (lambert + 0.01) + KdLights * pow( 1 - lambert, 10 );
+    color = Kd * (lambert + 0.01);
 
     // Cor final com correção gamma, considerando monitor sRGB.
     // Veja https://en.wikipedia.org/w/index.php?title=Gamma_correction&oldid=751281772#Windows.2C_Mac.2C_sRGB_and_TV.2Fvideo_standard_gammas
