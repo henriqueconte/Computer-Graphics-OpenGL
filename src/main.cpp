@@ -29,6 +29,8 @@
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>
+#include <iostream>
+#include <glm/gtx/string_cast.hpp>
 
 // Headers das bibliotecas OpenGL
 #include <glad/glad.h>   // Criação de contexto OpenGL 3.3
@@ -39,6 +41,7 @@
 #include <glm/vec4.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+
 // Headers da biblioteca para carregar modelos obj
 #include <tiny_obj_loader.h>
 
@@ -48,6 +51,11 @@
 #include "utils.h"
 #include "matrices.h"
 
+#include "Shrek.h"
+#include "CollisionLayer.h"
+#include "InvisibleWall.h"
+
+#define PI  3.14159265
 // Estrutura que representa um modelo geométrico carregado a partir de um
 // arquivo ".obj". Veja https://en.wikipedia.org/wiki/Wavefront_.obj_file .
 struct ObjModel
@@ -163,7 +171,7 @@ bool g_MiddleMouseButtonPressed = false; // Análogo para botão do meio do mous
 // usuário através do mouse (veja função CursorPosCallback()). A posição
 // efetiva da câmera é calculada dentro da função main(), dentro do loop de
 // renderização.
-float g_CameraTheta = 0.0f; // Ângulo no plano ZX em relação ao eixo Z
+float g_CameraTheta = PI; // Ângulo no plano ZX em relação ao eixo Z
 float g_CameraPhi = 0.0f;   // Ângulo em relação ao eixo Y
 float g_CameraDistance = 3.5f; // Distância da câmera para a origem
 
@@ -183,6 +191,10 @@ bool g_ShowInfoText = true;
 
 // Variáveis para o jogo
 float groudYPosition = -1.0f;
+std::vector<InvisibleWall> invisibleWallsList;
+Shrek shrek(glm::vec4(-3.0f, groudYPosition, -3.0f, 1.0f), CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f));
+glm::vec4 cameraRightVector;
+glm::vec4 cameraForwardVector;
 
 // Variáveis que definem um programa de GPU (shaders). Veja função LoadShadersFromFiles().
 GLuint vertex_shader_id;
@@ -197,6 +209,8 @@ GLint bbox_max_uniform;
 
 // Número de texturas carregadas pela função LoadTextureImage()
 GLuint g_NumLoadedTextures = 0;
+
+
 
 int main(int argc, char* argv[])
 {
@@ -346,13 +360,55 @@ int main(int argc, char* argv[])
         float z = r*cos(g_CameraPhi)*cos(g_CameraTheta);
         float x = r*cos(g_CameraPhi)*sin(g_CameraTheta);
 
+        float maxPhi = PI/2 - 0.01f;
+        float minPhi = 0;
+        float cameraMinDist = 2 * shrek.collisionLayer.collisionRadius;
+        float cameraMaxDist = 5 * shrek.collisionLayer.collisionRadius;
+
+
+        if (maxPhi < g_CameraPhi) {
+            g_CameraPhi = maxPhi;
+        }
+        if (minPhi > g_CameraPhi) {
+            g_CameraPhi = minPhi;
+        }
+        if (cameraMaxDist < g_CameraDistance) {
+            g_CameraDistance = cameraMaxDist;
+        }
+        if (cameraMinDist > g_CameraDistance) {
+            g_CameraDistance = cameraMinDist;
+        }
+
+
         // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
         // Veja slides 195-227 e 229-234 do documento Aula_08_Sistemas_de_Coordenadas.pdf.
+
+        std::cout << glm::to_string(shrek.position) << std::endl;
+        /*
         glm::vec4 camera_position_c  = glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
         glm::vec4 camera_lookat_l    = glm::vec4(0.0f,0.0f,0.0f,1.0f); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
         glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c; // Vetor "view", sentido para onde a câmera está virada
-        glm::vec4 camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f); // Vetor "up" fixado para apontar para o "céu" (eito Y global)
+        */
+        bool isCameraColliding = false;
+        glm::vec4 camera_position_c  = shrek.position + glm::vec4(x,y+1.0f,z,0.0f);
+        glm::vec4 camera_lookat_l    = shrek.position + glm::vec4(0.0f,1.0f,0.0f,0.0f);//glm::vec4(0.0f,1.0f,0.0f,1.0f);
+        glm::vec4 camera_view_vector = glm::vec4(0.0f,0.0f,0.0f,0.0f);
+        float cameraPrecision = 25.0f;
+        glm::vec4 viewDirection = (camera_lookat_l - camera_position_c) / cameraPrecision;
 
+        for (float i = 1.0f; i <= cameraPrecision && isCameraColliding == false; i += 1.0f) {
+            for (auto wall: invisibleWallsList) {
+                // fazer algo caso a câmera bata na parede
+            }
+            camera_view_vector += viewDirection;
+        }
+        camera_position_c = camera_lookat_l - camera_view_vector;
+
+        glm::vec4 camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f); // Vetor "up" fixado para apontar para o "céu" (eito Y global)
+        cameraRightVector = crossproduct(camera_view_vector, camera_up_vector) / norm(crossproduct(camera_view_vector, camera_up_vector)); // Vetor "right", direcao a direita da camera no plano XZ
+        cameraForwardVector = crossproduct(-cameraRightVector, camera_up_vector) / norm(crossproduct(-cameraRightVector, camera_up_vector)); // Vetor "forward", direcao a frente da camera no plano XZ
+
+        //printf(" shrek position %f\n", );
         // Computamos a matriz "View" utilizando os parâmetros da câmera para
         // definir o sistema de coordenadas da câmera.  Veja slides 2-14, 184-190 e 236-242 do documento Aula_08_Sistemas_de_Coordenadas.pdf.
         glm::mat4 view = Matrix_Camera_View(camera_position_c, camera_view_vector, camera_up_vector);
@@ -363,7 +419,7 @@ int main(int argc, char* argv[])
         // Note que, no sistema de coordenadas da câmera, os planos near e far
         // estão no sentido negativo! Veja slides 176-204 do documento Aula_09_Projecoes.pdf.
         float nearplane = -0.1f;  // Posição do "near plane"
-        float farplane  = -10.0f; // Posição do "far plane"
+        float farplane  = -50.0f; // Posição do "far plane"
 
         if (g_UsePerspectiveProjection)
         {
@@ -422,8 +478,9 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, PLANE);
         DrawVirtualObject("plane");
 
-        model = Matrix_Translate(3.0f,0.0f,0.0f)
-                * Matrix_Scale(1.5f, 1.5f, 1.5f);
+        model = Matrix_Translate(shrek.position.x,shrek.position.y,shrek.position.z)
+                * Matrix_Scale(1.5f, 1.5f, 1.5f)
+                * Matrix_Rotate_Y(g_CameraTheta - PI);
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, SHREK);
         DrawVirtualObject("shrek");
@@ -1080,6 +1137,7 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
         g_CameraTheta -= 0.01f*dx;
         g_CameraPhi   += 0.01f*dy;
 
+        /*
         // Em coordenadas esféricas, o ângulo phi deve ficar entre -pi/2 e +pi/2.
         float phimax = 3.141592f/2;
         float phimin = -phimax;
@@ -1089,6 +1147,7 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
 
         if (g_CameraPhi < phimin)
             g_CameraPhi = phimin;
+        */
 
         // Atualizamos as variáveis globais para armazenar a posição atual do
         // cursor como sendo a última posição conhecida do cursor.
@@ -1222,6 +1281,16 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         LoadShadersFromFiles();
         fprintf(stdout,"Shaders recarregados!\n");
         fflush(stdout);
+    }
+
+    if (key == GLFW_KEY_W) {
+        shrek.move(invisibleWallsList, cameraForwardVector);
+    } else if (key == GLFW_KEY_S) {
+        shrek.move(invisibleWallsList, -cameraForwardVector);
+    } else if (key == GLFW_KEY_A) {
+        shrek.move(invisibleWallsList, -cameraRightVector);
+    } else if (key == GLFW_KEY_D) {
+        shrek.move(invisibleWallsList, cameraRightVector);
     }
 }
 

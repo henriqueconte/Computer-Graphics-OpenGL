@@ -143,18 +143,6 @@ void main()
         U = (position_model.x - bbox_min.x) / (bbox_max.x - bbox_min.x);
         V = (position_model.y - bbox_min.y) / (bbox_max.y - bbox_min.y);
         Kd = texture(TextureImage2, vec2(U,V)).rgb;
-
-        /*
-        vec4 bbox_center = (bbox_min + bbox_max) / 2.0;
-        vec4 direction = position_model - bbox_center;
-
-        float theta = atan(direction.x, direction.z);
-        float phi = asin(direction.y / length(direction));
-
-        U = 0.5f + (theta / (2 * M_PI));
-        V = 0.5f + (phi / M_PI);
-        Kd = texture(TextureImage2, vec2(U,V)).rgb;
-        */
     }
 
     // Obtemos a refletância difusa a partir da leitura da imagem TextureImage0
