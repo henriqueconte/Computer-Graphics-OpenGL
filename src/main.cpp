@@ -54,6 +54,7 @@
 #include "Shrek.h"
 #include "CollisionLayer.h"
 #include "InvisibleWall.h"
+#include "Wall.h"
 
 #define PI  3.14159265
 // Estrutura que representa um modelo geométrico carregado a partir de um
@@ -195,6 +196,11 @@ std::vector<InvisibleWall> invisibleWallsList;
 Shrek shrek(glm::vec4(-3.0f, groudYPosition, -3.0f, 1.0f), CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f));
 glm::vec4 cameraRightVector;
 glm::vec4 cameraForwardVector;
+std::vector<Wall> wallsList;
+
+// Funções para o jogo
+void createWall(Wall newWall, int wallID);
+void setupMapWalls();
 
 // Variáveis que definem um programa de GPU (shaders). Veja função LoadShadersFromFiles().
 GLuint vertex_shader_id;
@@ -209,8 +215,6 @@ GLint bbox_max_uniform;
 
 // Número de texturas carregadas pela função LoadTextureImage()
 GLuint g_NumLoadedTextures = 0;
-
-
 
 int main(int argc, char* argv[])
 {
@@ -289,6 +293,7 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/groundTexture.jpg");      // TextureImage0
     LoadTextureImage("../../data/tc-earth_nightmap_citylights.gif"); // TextureImage1
     LoadTextureImage("../../data/shrekshirt.JPG"); // TextureImage2
+    LoadTextureImage("../../data/darkBricksTexture.jpg"); // TextureImage3
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel spheremodel("../../data/sphere.obj");
@@ -306,6 +311,10 @@ int main(int argc, char* argv[])
     ObjModel shrekModel("../../data/shrek.obj");
     ComputeNormals(&shrekModel);
     BuildTrianglesAndAddToVirtualScene(&shrekModel);
+
+    ObjModel wallModel("../../data/wall.obj");
+    ComputeNormals(&wallModel);
+    BuildTrianglesAndAddToVirtualScene(&wallModel);
 
     if ( argc > 1 )
     {
@@ -330,6 +339,7 @@ int main(int argc, char* argv[])
     glm::mat4 the_model;
     glm::mat4 the_view;
 
+    setupMapWalls();
     // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window))
     {
@@ -382,13 +392,6 @@ int main(int argc, char* argv[])
 
         // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
         // Veja slides 195-227 e 229-234 do documento Aula_08_Sistemas_de_Coordenadas.pdf.
-
-        std::cout << glm::to_string(shrek.position) << std::endl;
-        /*
-        glm::vec4 camera_position_c  = glm::vec4(x,y,z,1.0f); // Ponto "c", centro da câmera
-        glm::vec4 camera_lookat_l    = glm::vec4(0.0f,0.0f,0.0f,1.0f); // Ponto "l", para onde a câmera (look-at) estará sempre olhando
-        glm::vec4 camera_view_vector = camera_lookat_l - camera_position_c; // Vetor "view", sentido para onde a câmera está virada
-        */
         bool isCameraColliding = false;
         glm::vec4 camera_position_c  = shrek.position + glm::vec4(x,y+1.0f,z,0.0f);
         glm::vec4 camera_lookat_l    = shrek.position + glm::vec4(0.0f,1.0f,0.0f,0.0f);//glm::vec4(0.0f,1.0f,0.0f,1.0f);
@@ -408,7 +411,6 @@ int main(int argc, char* argv[])
         cameraRightVector = crossproduct(camera_view_vector, camera_up_vector) / norm(crossproduct(camera_view_vector, camera_up_vector)); // Vetor "right", direcao a direita da camera no plano XZ
         cameraForwardVector = crossproduct(-cameraRightVector, camera_up_vector) / norm(crossproduct(-cameraRightVector, camera_up_vector)); // Vetor "forward", direcao a frente da camera no plano XZ
 
-        //printf(" shrek position %f\n", );
         // Computamos a matriz "View" utilizando os parâmetros da câmera para
         // definir o sistema de coordenadas da câmera.  Veja slides 2-14, 184-190 e 236-242 do documento Aula_08_Sistemas_de_Coordenadas.pdf.
         glm::mat4 view = Matrix_Camera_View(camera_position_c, camera_view_vector, camera_up_vector);
@@ -454,6 +456,7 @@ int main(int argc, char* argv[])
         #define BURRO  1
         #define PLANE  2
         #define SHREK  3
+        #define WALL   4
 
         // Desenhamos o modelo da esfera
         model = Matrix_Translate(-1.0f,0.0f,0.0f)
@@ -485,6 +488,9 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, SHREK);
         DrawVirtualObject("shrek");
 
+        for (auto wall: wallsList) {
+            createWall(wall, WALL);
+        }
         // Pegamos um vértice com coordenadas de modelo (0.5, 0.5, 0.5, 1) e o
         // passamos por todos os sistemas de coordenadas armazenados nas
         // matrizes the_model, the_view, e the_projection; e escrevemos na tela
@@ -1595,6 +1601,34 @@ void PrintObjModelInfo(ObjModel* model)
     }
     printf("\n");
   }
+}
+
+void createWall(Wall newWall, int wallID) {
+    glm::mat4 wallModel = Matrix_Translate(newWall.position.x, newWall.position.y, newWall.position.z);
+    if (newWall.wallSize.z > newWall.wallSize.x) {
+        wallModel = wallModel * Matrix_Rotate_Y(PI / 2);
+    }
+
+    glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(wallModel));
+    glUniform1i(object_id_uniform, wallID); // WALL_INTERNA ou WALL
+    DrawVirtualObject("wall");
+}
+
+void setupMapWalls() {
+    for(float i = -20.0f; i < 15.0f; i += 10.0f) {
+        wallsList.push_back(Wall(glm::vec4(i, groudYPosition - 2, 20.0f, 1.0f), glm::vec3(10, 6, 1)));
+    }
+    for(float i = -15.0f; i < 15.0f; i += 10.0f) {
+        wallsList.push_back(Wall(glm::vec4(i, groudYPosition - 2, -20.0f, 1.0f), glm::vec3(10, 6, 1)));
+    }
+
+    for(float i = -20.0f; i < 15.0f; i += 10.0f) {
+        wallsList.push_back(Wall(glm::vec4(-20.0f, groudYPosition - 2, i, 1.0f), glm::vec3(1, 6, 10)));
+    }
+    for(float i = -20.0f; i < 15.0f; i += 10.0f) {
+        wallsList.push_back(Wall(glm::vec4(20.0f, groudYPosition - 2, i, 1.0f), glm::vec3(1, 6, 10)));
+    }
+
 }
 
 // set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null

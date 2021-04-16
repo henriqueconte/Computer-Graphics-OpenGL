@@ -15,7 +15,7 @@ Shrek::Shrek(glm::vec4 pos, CollisionLayer collisionLay)
 
 void Shrek::move(std::vector<InvisibleWall> invisibleWallList, glm::vec4 movementDelta) {
     bool willCollide = false;
-    glm::vec4 newPosition = position + 0.1f * movementDelta;
+    glm::vec4 newPosition = position + 0.5f * movementDelta;
     collisionLayer.centerPosition = newPosition;
 
     for (auto wall : invisibleWallList) {

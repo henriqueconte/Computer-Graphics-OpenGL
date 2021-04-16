@@ -23,6 +23,7 @@ uniform mat4 projection;
 #define BURRO  1
 #define PLANE  2
 #define SHREK  3
+#define WALL   4
 
 uniform int object_id;
 
@@ -129,8 +130,6 @@ void main()
         Kd = texture(TextureImage0, vec2(U,V)).rgb;
 
     } else if (object_id == SHREK) {
-
-
         float minx = bbox_min.x;
         float maxx = bbox_max.x;
 
@@ -143,6 +142,19 @@ void main()
         U = (position_model.x - bbox_min.x) / (bbox_max.x - bbox_min.x);
         V = (position_model.y - bbox_min.y) / (bbox_max.y - bbox_min.y);
         Kd = texture(TextureImage2, vec2(U,V)).rgb;
+    } else if (object_id == WALL) {
+        float minx = bbox_min.x;
+        float maxx = bbox_max.x;
+
+        float miny = bbox_min.y;
+        float maxy = bbox_max.y;
+
+        float minz = bbox_min.z;
+        float maxz = bbox_max.z;
+
+        U = (position_model.x - bbox_min.x) / (bbox_max.x - bbox_min.x);
+        V = (position_model.y - bbox_min.y) / (bbox_max.y - bbox_min.y);
+        Kd = texture(TextureImage3, vec2(U,V)).rgb;
     }
 
     // Obtemos a refletância difusa a partir da leitura da imagem TextureImage0
@@ -158,4 +170,3 @@ void main()
     // Veja https://en.wikipedia.org/w/index.php?title=Gamma_correction&oldid=751281772#Windows.2C_Mac.2C_sRGB_and_TV.2Fvideo_standard_gammas
     color = pow(color, vec3(1.0,1.0,1.0)/2.2);
 }
-
