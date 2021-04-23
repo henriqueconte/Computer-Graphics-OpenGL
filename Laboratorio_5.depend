@@ -966,7 +966,7 @@
 	<inttypes.h>
 	<stdint.h>
 
-1610814837 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\main.cpp
+1610822647 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -1898,14 +1898,15 @@
 	<iostream>
 	"InvisibleWall.h"
 
-1610809303 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\shrek.cpp
+1610822619 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\shrek.cpp
 	"Shrek.h"
 
-1610655024 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\shrek.h
+1610821031 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\shrek.h
 	<glm/vec4.hpp>
 	<vector>
 	"CollisionLayer.h"
 	"InvisibleWall.h"
+	<GLFW/glfw3.h>
 
 1603713706 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\glm\gtx\string_cast.hpp
 	"../glm.hpp"

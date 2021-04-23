@@ -194,6 +194,7 @@ bool g_ShowInfoText = true;
 float groudYPosition = -1.0f;
 std::vector<InvisibleWall> invisibleWallsList;
 Shrek shrek(glm::vec4(0.0f, groudYPosition, 0.0f, 1.0f), CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 2.0f));
+glm::vec4 camera_up_vector;
 glm::vec4 cameraRightVector;
 glm::vec4 cameraForwardVector;
 std::vector<Wall> wallsList;
@@ -407,7 +408,7 @@ int main(int argc, char* argv[])
         }
         camera_position_c = camera_lookat_l - camera_view_vector;
 
-        glm::vec4 camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f); // Vetor "up" fixado para apontar para o "céu" (eito Y global)
+        camera_up_vector   = glm::vec4(0.0f,1.0f,0.0f,0.0f); // Vetor "up" fixado para apontar para o "céu" (eito Y global)
         cameraRightVector = crossproduct(camera_view_vector, camera_up_vector) / norm(crossproduct(camera_view_vector, camera_up_vector)); // Vetor "right", direcao a direita da camera no plano XZ
         cameraForwardVector = crossproduct(-cameraRightVector, camera_up_vector) / norm(crossproduct(-cameraRightVector, camera_up_vector)); // Vetor "forward", direcao a frente da camera no plano XZ
 
@@ -491,6 +492,26 @@ int main(int argc, char* argv[])
         for (auto wall: wallsList) {
             createWall(wall, WALL);
         }
+
+        if (shrek.isJumping) {
+            if (shrek.isGoingUp) {
+                std::vector<InvisibleWall> noWalls;
+                shrek.move(noWalls, glm::vec4(camera_up_vector.x, camera_up_vector.y * 0.1, camera_up_vector.z, camera_up_vector.w));
+
+                if (shrek.position.y >= shrek.beforeJumpYPosition + shrek.jumpHeight) {
+                    shrek.isGoingUp = false;
+                    printf("should go down \n");
+                }
+            } else {
+                std::vector<InvisibleWall> noWalls;
+                shrek.move(noWalls, glm::vec4(camera_up_vector.x, -camera_up_vector.y * 0.1, camera_up_vector.z, camera_up_vector.w));
+
+                if (shrek.position.y <= shrek.beforeJumpYPosition) {
+                    shrek.isJumping = false;
+                }
+            }
+        }
+
         // Pegamos um vértice com coordenadas de modelo (0.5, 0.5, 0.5, 1) e o
         // passamos por todos os sistemas de coordenadas armazenados nas
         // matrizes the_model, the_view, e the_projection; e escrevemos na tela
@@ -1251,18 +1272,6 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         g_AngleZ += (mod & GLFW_MOD_SHIFT) ? -delta : delta;
     }
 
-    // Se o usuário apertar a tecla espaço, resetamos os ângulos de Euler para zero.
-    if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
-    {
-        g_AngleX = 0.0f;
-        g_AngleY = 0.0f;
-        g_AngleZ = 0.0f;
-        g_ForearmAngleX = 0.0f;
-        g_ForearmAngleZ = 0.0f;
-        g_TorsoPositionX = 0.0f;
-        g_TorsoPositionY = 0.0f;
-    }
-
     // Se o usuário apertar a tecla P, utilizamos projeção perspectiva.
     if (key == GLFW_KEY_P && action == GLFW_PRESS)
     {
@@ -1297,6 +1306,14 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         shrek.move(invisibleWallsList, -cameraRightVector);
     } else if (key == GLFW_KEY_D) {
         shrek.move(invisibleWallsList, cameraRightVector);
+    }
+
+    if (key == GLFW_KEY_SPACE && action == GLFW_RELEASE) {
+        if (shrek.isJumping == false) {
+            shrek.beforeJumpYPosition = shrek.position.y;
+            shrek.isJumping = true;
+            shrek.isGoingUp = true;
+        }
     }
 }
 

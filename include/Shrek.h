@@ -4,12 +4,17 @@
 #include <vector>
 #include "CollisionLayer.h"
 #include "InvisibleWall.h"
+#include <GLFW/glfw3.h>
 
 class Shrek
 {
     public:
         glm::vec4 position;
         CollisionLayer collisionLayer;
+        bool isJumping;
+        float beforeJumpYPosition;
+        float jumpHeight;
+        bool isGoingUp;
 
         Shrek();
         Shrek(glm::vec4 pos, CollisionLayer collisionLay);
