@@ -193,7 +193,7 @@ bool g_ShowInfoText = true;
 // Variáveis para o jogo
 float groudYPosition = -1.0f;
 std::vector<InvisibleWall> invisibleWallsList;
-Shrek shrek(glm::vec4(-3.0f, groudYPosition, -3.0f, 1.0f), CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f));
+Shrek shrek(glm::vec4(0.0f, groudYPosition, 0.0f, 1.0f), CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 2.0f));
 glm::vec4 cameraRightVector;
 glm::vec4 cameraForwardVector;
 std::vector<Wall> wallsList;
@@ -1608,6 +1608,9 @@ void createWall(Wall newWall, int wallID) {
     if (newWall.wallSize.z > newWall.wallSize.x) {
         wallModel = wallModel * Matrix_Rotate_Y(PI / 2);
     }
+    if (newWall.shouldReverse) {
+        wallModel = wallModel * Matrix_Rotate_Y(PI);
+    }
 
     glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(wallModel));
     glUniform1i(object_id_uniform, wallID); // WALL_INTERNA ou WALL
@@ -1615,20 +1618,25 @@ void createWall(Wall newWall, int wallID) {
 }
 
 void setupMapWalls() {
+    // Front walls
     for(float i = -20.0f; i < 15.0f; i += 10.0f) {
-        wallsList.push_back(Wall(glm::vec4(i, groudYPosition - 2, 20.0f, 1.0f), glm::vec3(10, 6, 1)));
+        wallsList.push_back(Wall(glm::vec4(i, groudYPosition - 2, 20.0f, 1.0f), glm::vec3(10, 6, 1), true));
     }
-    for(float i = -15.0f; i < 15.0f; i += 10.0f) {
-        wallsList.push_back(Wall(glm::vec4(i, groudYPosition - 2, -20.0f, 1.0f), glm::vec3(10, 6, 1)));
-    }
-
+    // Back walls
     for(float i = -20.0f; i < 15.0f; i += 10.0f) {
-        wallsList.push_back(Wall(glm::vec4(-20.0f, groudYPosition - 2, i, 1.0f), glm::vec3(1, 6, 10)));
+        wallsList.push_back(Wall(glm::vec4(i, groudYPosition - 2, -20.0f, 1.0f), glm::vec3(10, 6, 1), false));
     }
+    // Right walls
     for(float i = -20.0f; i < 15.0f; i += 10.0f) {
-        wallsList.push_back(Wall(glm::vec4(20.0f, groudYPosition - 2, i, 1.0f), glm::vec3(1, 6, 10)));
+        wallsList.push_back(Wall(glm::vec4(-20.0f, groudYPosition - 2, i, 1.0f), glm::vec3(1, 6, 10), false));
     }
-
+    // Left walls
+    for(float i = -20.0f; i < 15.0f; i += 10.0f) {
+        wallsList.push_back(Wall(glm::vec4(20.0f, groudYPosition - 2, i, 1.0f), glm::vec3(1, 6, 10), true));
+    }
+    for (auto wall: wallsList) {
+        invisibleWallsList.push_back(wall.physicsBody);
+    }
 }
 
 // set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null

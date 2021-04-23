@@ -11,9 +11,10 @@ class Wall
         glm::vec4 position;
         glm::vec3 wallSize;
         InvisibleWall physicsBody;
+        bool shouldReverse;
 
         Wall();
-        Wall(glm::vec4 pos, glm::vec3 wSize);
+        Wall(glm::vec4 pos, glm::vec3 wSize, bool sReverse);
 };
 
 #endif // WALL_H

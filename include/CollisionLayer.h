@@ -1,6 +1,9 @@
 #ifndef COLLISIONLAYER_H
 #define COLLISIONLAYER_H
 #include <glm/vec4.hpp>
+#include <cmath>
+#include <iostream>
+#include "InvisibleWall.h"
 
 class CollisionLayer
 {
@@ -10,6 +13,7 @@ class CollisionLayer
 
         CollisionLayer();
         CollisionLayer(glm::vec4 centerPos, float collisionRad);
+        bool isCollidingWithWall(InvisibleWall wall);
 };
 
 #endif // COLLISIONLAYER_H

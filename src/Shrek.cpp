@@ -20,12 +20,11 @@ void Shrek::move(std::vector<InvisibleWall> invisibleWallList, glm::vec4 movemen
 
     for (auto wall : invisibleWallList) {
         // TODO: Implementar colisão do personagem com as paredes
-            /*
-         if (Box2SphereCollision(wall,collisionLayer)) {
+        printf("wall");
+         if (collisionLayer.isCollidingWithWall(wall)) {
              willCollide = true;
              break;
          }
-         */
     }
 
     if (willCollide){
