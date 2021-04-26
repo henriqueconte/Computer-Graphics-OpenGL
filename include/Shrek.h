@@ -17,6 +17,7 @@ class Shrek
         float beforeJumpYPosition;
         float jumpHeight;
         bool isGoingUp;
+        bool isAboveGrass;
 
         Shrek();
         Shrek(glm::vec4 pos, CollisionLayer collisionLay);

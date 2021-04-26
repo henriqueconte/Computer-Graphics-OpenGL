@@ -966,7 +966,7 @@
 	<inttypes.h>
 	<stdint.h>
 
-1611092795 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\main.cpp
+1611106186 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -1889,7 +1889,7 @@
 1603713706 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\tiny_obj_loader.cpp
 	"tiny_obj_loader.h"
 
-1611091396 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\collisionlayer.cpp
+1611106426 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\collisionlayer.cpp
 	"CollisionLayer.h"
 
 1611090802 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\collisionlayer.h
@@ -1898,10 +1898,10 @@
 	<iostream>
 	"InvisibleWall.h"
 
-1611092819 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\shrek.cpp
+1611106120 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\shrek.cpp
 	"Shrek.h"
 
-1611092795 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\shrek.h
+1611105528 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\shrek.h
 	<glm/vec4.hpp>
 	<vector>
 	<iostream>
@@ -2028,10 +2028,10 @@
 	<cstdarg>
 	<cstdio>
 
-1611088124 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\invisiblewall.cpp
+1611097138 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\invisiblewall.cpp
 	"InvisibleWall.h"
 
-1611088124 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\invisiblewall.h
+1611097138 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\invisiblewall.h
 	<glm/vec4.hpp>
 
 1611088124 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\wall.cpp

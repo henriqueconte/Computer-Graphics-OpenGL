@@ -8,6 +8,8 @@ class InvisibleWall
         glm::vec4 min;
         glm::vec4 max;
         bool isLavaFloor;
+        bool isGrassFloor;
+
         // Constructor
         InvisibleWall();
         InvisibleWall(glm::vec4 c, float w, float h, float d);

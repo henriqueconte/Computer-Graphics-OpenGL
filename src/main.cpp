@@ -199,11 +199,14 @@ glm::vec4 cameraRightVector;
 glm::vec4 cameraForwardVector;
 std::vector<Wall> wallsList;
 Wall lavaFloor = Wall(glm::vec4(0.0f, groudYPosition + 0.1f, 0.0f, 1.0f), glm::vec3(40.0f, 0.5f, 10.0f), false);
+std::vector<Wall> grassFloorList;
 
 // Funções para o jogo
 void createWall(Wall newWall, int wallID);
+void createGrassFloor(Wall grassFloor, int grassFloorID);
 void setupMapWalls();
 void setupLavaFloor();
+void setupGrassFloor();
 
 // Variáveis que definem um programa de GPU (shaders). Veja função LoadShadersFromFiles().
 GLuint vertex_shader_id;
@@ -297,7 +300,8 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/tc-earth_nightmap_citylights.gif"); // TextureImage1
     LoadTextureImage("../../data/shrekshirt.JPG"); // TextureImage2
     LoadTextureImage("../../data/darkBricksTexture.jpg"); // TextureImage3
-    LoadTextureImage("../../data/lavatexture.png"); // TextureImage4
+    LoadTextureImage("../../data/lavatexture.png"); // TextureImage 4
+    LoadTextureImage("../../data/grassTexture.jpg"); // TextureImage 5
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel spheremodel("../../data/sphere.obj");
@@ -345,6 +349,7 @@ int main(int argc, char* argv[])
 
     setupMapWalls();
     setupLavaFloor();
+    setupGrassFloor();
     // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window))
     {
@@ -463,6 +468,7 @@ int main(int argc, char* argv[])
         #define SHREK  3
         #define WALL   4
         #define LAVA   5
+        #define GRASS  6
 
         // Desenhamos o modelo da esfera
         model = Matrix_Translate(-1.0f,0.0f,0.0f)
@@ -506,6 +512,10 @@ int main(int argc, char* argv[])
             createWall(wall, WALL);
         }
 
+        for (auto grassFloor: grassFloorList) {
+            createGrassFloor(grassFloor, GRASS);
+        }
+
         if (shrek.isJumping) {
             if (shrek.isGoingUp) {
                 std::vector<InvisibleWall> noWalls;
@@ -520,7 +530,10 @@ int main(int argc, char* argv[])
 
                 if (shrek.position.y <= shrek.beforeJumpYPosition) {
                     shrek.isJumping = false;
-                    shrek.move(invisibleWallsList, glm::vec4(0, 0, 0, 0));
+                    if (shrek.isAboveGrass == false) {
+                        shrek.move(invisibleWallsList, glm::vec4(0, 0, 0, 0));
+                    }
+
                 }
             }
         }
@@ -700,6 +713,7 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(program_id, "TextureImage2"), 2);
     glUniform1i(glGetUniformLocation(program_id, "TextureImage3"), 3);
     glUniform1i(glGetUniformLocation(program_id, "TextureImage4"), 4);
+    glUniform1i(glGetUniformLocation(program_id, "TextureImage5"), 5);
     glUseProgram(0);
 }
 
@@ -1327,6 +1341,7 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
             shrek.beforeJumpYPosition = shrek.position.y;
             shrek.isJumping = true;
             shrek.isGoingUp = true;
+            shrek.isAboveGrass = false;
         }
     }
 }
@@ -1667,18 +1682,50 @@ void setupMapWalls() {
     }
     for (auto wall: wallsList) {
         wall.physicsBody.isLavaFloor = false;
+        wall.physicsBody.isGrassFloor = false;
         invisibleWallsList.push_back(wall.physicsBody);
     }
 }
 
 void setupLavaFloor() {
     lavaFloor.physicsBody.isLavaFloor = true;
+    lavaFloor.physicsBody.isGrassFloor = false;
     lavaFloor.physicsBody.min.z *= 2;
     lavaFloor.physicsBody.max.z *= 2;
     lavaFloor.physicsBody.min.y = groudYPosition;//groudYPosition;
     lavaFloor.physicsBody.max.y = groudYPosition;
     invisibleWallsList.push_back(lavaFloor.physicsBody);
 }
+
+void setupGrassFloor() {
+    Wall grassFloor1 = Wall(glm::vec4(10.0f, groudYPosition + 0.1f, -8.0f, 1.0f), glm::vec3(0.1f, 0.1f, 0.1f), true);
+    grassFloor1.physicsBody.isGrassFloor = true;
+    grassFloor1.physicsBody.isLavaFloor = false;
+    grassFloor1.physicsBody.min.x *= 0.9;
+    grassFloor1.physicsBody.max.x *= 1.1;
+    grassFloor1.physicsBody.min.y *= 1;
+    grassFloor1.physicsBody.max.y *= 1;
+    grassFloor1.physicsBody.min.z *= 0.85;
+    grassFloor1.physicsBody.max.z *= 1;
+
+    grassFloorList.push_back(grassFloor1);
+
+    invisibleWallsList.push_back(grassFloor1.physicsBody);
+}
+
+void createGrassFloor(Wall grassFloor, int grassFloorID) {
+    glm::mat4 wallModel = Matrix_Translate(grassFloor.position.x, grassFloor.position.y, grassFloor.position.z)
+                            * Matrix_Rotate_Z(PI / 2)
+                            * Matrix_Rotate_X(PI / 2)
+                            * Matrix_Rotate_Y(PI / 2)
+                            * Matrix_Scale(grassFloor.wallSize.x, grassFloor.wallSize.y, grassFloor.wallSize.z);
+
+    glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(wallModel));
+    glUniform1i(object_id_uniform, grassFloorID); // WALL_INTERNA ou WALL
+    DrawVirtualObject("wall");
+}
+
+
 
 // set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null
 // vim: set spell spelllang=pt_br :

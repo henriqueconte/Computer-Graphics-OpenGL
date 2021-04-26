@@ -25,6 +25,7 @@ uniform mat4 projection;
 #define SHREK  3
 #define WALL   4
 #define LAVA   5
+#define GRASS  6
 
 uniform int object_id;
 
@@ -38,6 +39,7 @@ uniform sampler2D TextureImage1;
 uniform sampler2D TextureImage2;
 uniform sampler2D TextureImage3;
 uniform sampler2D TextureImage4;
+uniform sampler2D TextureImage5;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec3 color;
@@ -161,6 +163,19 @@ void main()
         U = texcoords.x;
         V = texcoords.y;
         Kd = texture(TextureImage4, vec2(U,V)).rgb;
+    } else if (object_id == GRASS) {
+        float minx = bbox_min.x;
+        float maxx = bbox_max.x;
+
+        float miny = bbox_min.y;
+        float maxy = bbox_max.y;
+
+        float minz = bbox_min.z;
+        float maxz = bbox_max.z;
+
+        U = (position_model.x - bbox_min.x) / (bbox_max.x - bbox_min.x);
+        V = (position_model.y - bbox_min.y) / (bbox_max.y - bbox_min.y);
+        Kd = texture(TextureImage5, vec2(U,V)).rgb;
     }
 
     // Equação de Iluminação
