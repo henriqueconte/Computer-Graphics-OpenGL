@@ -24,6 +24,7 @@ uniform mat4 projection;
 #define PLANE  2
 #define SHREK  3
 #define WALL   4
+#define LAVA   5
 
 uniform int object_id;
 
@@ -36,6 +37,7 @@ uniform sampler2D TextureImage0;
 uniform sampler2D TextureImage1;
 uniform sampler2D TextureImage2;
 uniform sampler2D TextureImage3;
+uniform sampler2D TextureImage4;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec3 color;
@@ -155,11 +157,11 @@ void main()
         U = (position_model.x - bbox_min.x) / (bbox_max.x - bbox_min.x);
         V = (position_model.y - bbox_min.y) / (bbox_max.y - bbox_min.y);
         Kd = texture(TextureImage3, vec2(U,V)).rgb;
+    } else if (object_id == LAVA) {
+        U = texcoords.x;
+        V = texcoords.y;
+        Kd = texture(TextureImage4, vec2(U,V)).rgb;
     }
-
-    // Obtemos a refletância difusa a partir da leitura da imagem TextureImage0
-
-
 
     // Equação de Iluminação
     float lambert = max(0,dot(n,l));

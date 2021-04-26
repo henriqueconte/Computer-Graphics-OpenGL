@@ -12,6 +12,7 @@ CollisionLayer::CollisionLayer(glm::vec4 centerPos, float collisionRad)
     collisionRadius = collisionRad;
 }
 
+// Colisão esfera -> cubo
 bool CollisionLayer::isCollidingWithWall(InvisibleWall wall) {
     float x = std::max(wall.min.x, std::min(centerPosition.x, wall.max.x));
     float y = std::max(wall.min.y, std::min(centerPosition.y, wall.max.y));
@@ -26,4 +27,12 @@ bool CollisionLayer::isCollidingWithWall(InvisibleWall wall) {
     );
 
     return distance < collisionRadius;
+}
+
+// Colisão ponto -> plano
+bool CollisionLayer::isCollidingWithLava(InvisibleWall lavaFloor) {
+    bool isInsideX = lavaFloor.min.x <= centerPosition.x && lavaFloor.max.x >= centerPosition.x;
+    bool isBelowY = lavaFloor.max.y >= centerPosition.y;
+    bool isInsideZ = lavaFloor.min.z <= centerPosition.z && lavaFloor.max.z >= centerPosition.z;
+    return isInsideX && isBelowY && isInsideZ;
 }

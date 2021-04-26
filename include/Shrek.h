@@ -2,6 +2,7 @@
 #define SHREK_H
 #include <glm/vec4.hpp>
 #include <vector>
+#include <iostream>
 #include "CollisionLayer.h"
 #include "InvisibleWall.h"
 #include <GLFW/glfw3.h>
@@ -10,6 +11,7 @@ class Shrek
 {
     public:
         glm::vec4 position;
+        glm::vec4 shrekOriginalPosition;
         CollisionLayer collisionLayer;
         bool isJumping;
         float beforeJumpYPosition;

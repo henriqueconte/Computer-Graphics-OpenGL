@@ -193,15 +193,17 @@ bool g_ShowInfoText = true;
 // Variáveis para o jogo
 float groudYPosition = -1.0f;
 std::vector<InvisibleWall> invisibleWallsList;
-Shrek shrek(glm::vec4(0.0f, groudYPosition, 0.0f, 1.0f), CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 2.0f));
+Shrek shrek(Shrek().shrekOriginalPosition, CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 2.0f));
 glm::vec4 camera_up_vector;
 glm::vec4 cameraRightVector;
 glm::vec4 cameraForwardVector;
 std::vector<Wall> wallsList;
+Wall lavaFloor = Wall(glm::vec4(0.0f, groudYPosition + 0.1f, 0.0f, 1.0f), glm::vec3(40.0f, 0.5f, 10.0f), false);
 
 // Funções para o jogo
 void createWall(Wall newWall, int wallID);
 void setupMapWalls();
+void setupLavaFloor();
 
 // Variáveis que definem um programa de GPU (shaders). Veja função LoadShadersFromFiles().
 GLuint vertex_shader_id;
@@ -295,6 +297,7 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/tc-earth_nightmap_citylights.gif"); // TextureImage1
     LoadTextureImage("../../data/shrekshirt.JPG"); // TextureImage2
     LoadTextureImage("../../data/darkBricksTexture.jpg"); // TextureImage3
+    LoadTextureImage("../../data/lavatexture.png"); // TextureImage4
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel spheremodel("../../data/sphere.obj");
@@ -341,6 +344,7 @@ int main(int argc, char* argv[])
     glm::mat4 the_view;
 
     setupMapWalls();
+    setupLavaFloor();
     // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window))
     {
@@ -458,6 +462,7 @@ int main(int argc, char* argv[])
         #define PLANE  2
         #define SHREK  3
         #define WALL   4
+        #define LAVA   5
 
         // Desenhamos o modelo da esfera
         model = Matrix_Translate(-1.0f,0.0f,0.0f)
@@ -489,6 +494,14 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, SHREK);
         DrawVirtualObject("shrek");
 
+        // Desenhamos a lava
+        model = Matrix_Translate(lavaFloor.position.x,lavaFloor.position.y,lavaFloor.position.z)
+                * Matrix_Scale(lavaFloor.wallSize.x, lavaFloor.wallSize.y, lavaFloor.wallSize.z);
+
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, LAVA);
+        DrawVirtualObject("plane");
+
         for (auto wall: wallsList) {
             createWall(wall, WALL);
         }
@@ -500,7 +513,6 @@ int main(int argc, char* argv[])
 
                 if (shrek.position.y >= shrek.beforeJumpYPosition + shrek.jumpHeight) {
                     shrek.isGoingUp = false;
-                    printf("should go down \n");
                 }
             } else {
                 std::vector<InvisibleWall> noWalls;
@@ -508,6 +520,7 @@ int main(int argc, char* argv[])
 
                 if (shrek.position.y <= shrek.beforeJumpYPosition) {
                     shrek.isJumping = false;
+                    shrek.move(invisibleWallsList, glm::vec4(0, 0, 0, 0));
                 }
             }
         }
@@ -686,6 +699,7 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(program_id, "TextureImage1"), 1);
     glUniform1i(glGetUniformLocation(program_id, "TextureImage2"), 2);
     glUniform1i(glGetUniformLocation(program_id, "TextureImage3"), 3);
+    glUniform1i(glGetUniformLocation(program_id, "TextureImage4"), 4);
     glUseProgram(0);
 }
 
@@ -1652,8 +1666,18 @@ void setupMapWalls() {
         wallsList.push_back(Wall(glm::vec4(20.0f, groudYPosition - 2, i, 1.0f), glm::vec3(1, 6, 10), true));
     }
     for (auto wall: wallsList) {
+        wall.physicsBody.isLavaFloor = false;
         invisibleWallsList.push_back(wall.physicsBody);
     }
+}
+
+void setupLavaFloor() {
+    lavaFloor.physicsBody.isLavaFloor = true;
+    lavaFloor.physicsBody.min.z *= 2;
+    lavaFloor.physicsBody.max.z *= 2;
+    lavaFloor.physicsBody.min.y = groudYPosition;//groudYPosition;
+    lavaFloor.physicsBody.max.y = groudYPosition;
+    invisibleWallsList.push_back(lavaFloor.physicsBody);
 }
 
 // set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null
