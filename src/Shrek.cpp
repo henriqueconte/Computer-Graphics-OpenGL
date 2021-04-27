@@ -3,7 +3,7 @@
 Shrek::Shrek()
 {
     position = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
-    shrekOriginalPosition = glm::vec4(0.0f, -1.0f, -12.0f, 1.0f);
+    shrekOriginalPosition = glm::vec4(8.0f, -1.0f, -12.0f, 1.0f);
     collisionLayer = CollisionLayer();
     isJumping = false;
     beforeJumpYPosition = 0.0f;
@@ -15,7 +15,7 @@ Shrek::Shrek()
 Shrek::Shrek(glm::vec4 pos, CollisionLayer collisionLay)
 {
     position = pos;
-    shrekOriginalPosition = glm::vec4(0.0f, -1.0f, -12.0f, 1.0f);
+    shrekOriginalPosition = glm::vec4(8.0f, -1.0f, -12.0f, 1.0f);
     collisionLayer = collisionLay;
     isJumping = false;
     beforeJumpYPosition = 0.0f;

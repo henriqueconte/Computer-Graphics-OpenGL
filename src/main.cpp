@@ -200,6 +200,7 @@ glm::vec4 cameraForwardVector;
 std::vector<Wall> wallsList;
 Wall lavaFloor = Wall(glm::vec4(0.0f, groudYPosition + 0.1f, 0.0f, 1.0f), glm::vec3(40.0f, 0.5f, 10.0f), false);
 std::vector<Wall> grassFloorList;
+Wall fence = Wall(glm::vec4(0.0f, groudYPosition, -14.0f, 1.0f), glm::vec3(1.8f, 1.3f, 1.5f), false);
 
 // Funções para o jogo
 void createWall(Wall newWall, int wallID);
@@ -302,6 +303,8 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/darkBricksTexture.jpg"); // TextureImage3
     LoadTextureImage("../../data/lavatexture.png"); // TextureImage 4
     LoadTextureImage("../../data/grassTexture.jpg"); // TextureImage 5
+    LoadTextureImage("../../data/metalTexture.jpg"); // TextureImage 6
+
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
     ObjModel spheremodel("../../data/sphere.obj");
@@ -323,6 +326,10 @@ int main(int argc, char* argv[])
     ObjModel wallModel("../../data/wall.obj");
     ComputeNormals(&wallModel);
     BuildTrianglesAndAddToVirtualScene(&wallModel);
+
+    ObjModel fenceModel("../../data/fence.obj");
+    ComputeNormals(&fenceModel);
+    BuildTrianglesAndAddToVirtualScene(&fenceModel);
 
     if ( argc > 1 )
     {
@@ -469,6 +476,7 @@ int main(int argc, char* argv[])
         #define WALL   4
         #define LAVA   5
         #define GRASS  6
+        #define FENCE  7
 
         // Desenhamos o modelo da esfera
         model = Matrix_Translate(-1.0f,0.0f,0.0f)
@@ -493,6 +501,7 @@ int main(int argc, char* argv[])
         glUniform1i(object_id_uniform, PLANE);
         DrawVirtualObject("plane");
 
+        // Desenhamos o shrek
         model = Matrix_Translate(shrek.position.x,shrek.position.y,shrek.position.z)
                 * Matrix_Scale(1.5f, 1.5f, 1.5f)
                 * Matrix_Rotate_Y(g_CameraTheta - PI);
@@ -507,6 +516,15 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, LAVA);
         DrawVirtualObject("plane");
+
+        // Desenhamos a cerca
+        model = Matrix_Translate(fence.position.x, fence.position.y, fence.position.z)
+                * Matrix_Scale(fence.wallSize.x, fence.wallSize.y, fence.wallSize.z)
+                * Matrix_Rotate_Y(PI / 2);
+
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, FENCE);
+        DrawVirtualObject("fence");
 
         for (auto wall: wallsList) {
             createWall(wall, WALL);
@@ -714,6 +732,7 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(program_id, "TextureImage3"), 3);
     glUniform1i(glGetUniformLocation(program_id, "TextureImage4"), 4);
     glUniform1i(glGetUniformLocation(program_id, "TextureImage5"), 5);
+    glUniform1i(glGetUniformLocation(program_id, "TextureImage6"), 6);
     glUseProgram(0);
 }
 

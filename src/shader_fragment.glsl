@@ -26,6 +26,7 @@ uniform mat4 projection;
 #define WALL   4
 #define LAVA   5
 #define GRASS  6
+#define FENCE  7
 
 uniform int object_id;
 
@@ -40,6 +41,7 @@ uniform sampler2D TextureImage2;
 uniform sampler2D TextureImage3;
 uniform sampler2D TextureImage4;
 uniform sampler2D TextureImage5;
+uniform sampler2D TextureImage6;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec3 color;
@@ -176,6 +178,10 @@ void main()
         U = (position_model.x - bbox_min.x) / (bbox_max.x - bbox_min.x);
         V = (position_model.y - bbox_min.y) / (bbox_max.y - bbox_min.y);
         Kd = texture(TextureImage5, vec2(U,V)).rgb;
+    } else if (object_id == FENCE) {
+        U = texcoords.x;
+        V = texcoords.y;
+        Kd = texture(TextureImage6, vec2(U,V)).rgb;
     }
 
     // Equação de Iluminação
