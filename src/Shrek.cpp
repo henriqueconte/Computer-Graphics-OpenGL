@@ -27,7 +27,7 @@ Shrek::Shrek(glm::vec4 pos, CollisionLayer collisionLay)
 
 void Shrek::move(std::vector<InvisibleWall> invisibleWallList, glm::vec4 movementDelta) {
     bool willCollide = false;
-    glm::vec4 newPosition = position + 0.5f * movementDelta;
+    glm::vec4 newPosition = position + 0.2f * movementDelta;
     collisionLayer.centerPosition = newPosition;
     isAboveGrass = false;
 
@@ -37,9 +37,8 @@ void Shrek::move(std::vector<InvisibleWall> invisibleWallList, glm::vec4 movemen
              //willCollide = true;
              isAboveGrass = true;
              //position = shrekOriginalPosition;
-             break;
 
-                         /*
+            /*
                  printf("\n shrek x position: ");
                  std::cout << position.x;
 
@@ -57,8 +56,7 @@ void Shrek::move(std::vector<InvisibleWall> invisibleWallList, glm::vec4 movemen
 
                  printf("\n COLLISION z position: ");
                  std::cout << collisionLayer.centerPosition.z;
-                 */
-                 /*
+
                  printf("\n min x: ");
                  std::cout << wall.min.x;
 
@@ -74,9 +72,10 @@ void Shrek::move(std::vector<InvisibleWall> invisibleWallList, glm::vec4 movemen
                  printf("\n min z: ");
                  std::cout << wall.min.z;
 
-                 printf("\n min z: ");
+                 printf("\n max z: ");
                  std::cout << wall.max.z;
-                 */
+            */
+             break;
         }
     }
     if (isAboveGrass == false) {

@@ -519,14 +519,14 @@ int main(int argc, char* argv[])
         if (shrek.isJumping) {
             if (shrek.isGoingUp) {
                 std::vector<InvisibleWall> noWalls;
-                shrek.move(noWalls, glm::vec4(camera_up_vector.x, camera_up_vector.y * 0.1, camera_up_vector.z, camera_up_vector.w));
+                shrek.move(noWalls, glm::vec4(camera_up_vector.x, camera_up_vector.y * 0.22, camera_up_vector.z, camera_up_vector.w));
 
                 if (shrek.position.y >= shrek.beforeJumpYPosition + shrek.jumpHeight) {
                     shrek.isGoingUp = false;
                 }
             } else {
                 std::vector<InvisibleWall> noWalls;
-                shrek.move(noWalls, glm::vec4(camera_up_vector.x, -camera_up_vector.y * 0.1, camera_up_vector.z, camera_up_vector.w));
+                shrek.move(noWalls, glm::vec4(camera_up_vector.x, -camera_up_vector.y * 0.22, camera_up_vector.z, camera_up_vector.w));
 
                 if (shrek.position.y <= shrek.beforeJumpYPosition) {
                     shrek.isJumping = false;
@@ -1698,19 +1698,34 @@ void setupLavaFloor() {
 }
 
 void setupGrassFloor() {
-    Wall grassFloor1 = Wall(glm::vec4(10.0f, groudYPosition + 0.1f, -8.0f, 1.0f), glm::vec3(0.1f, 0.1f, 0.1f), true);
-    grassFloor1.physicsBody.isGrassFloor = true;
-    grassFloor1.physicsBody.isLavaFloor = false;
-    grassFloor1.physicsBody.min.x *= 0.9;
-    grassFloor1.physicsBody.max.x *= 1.1;
-    grassFloor1.physicsBody.min.y *= 1;
-    grassFloor1.physicsBody.max.y *= 1;
-    grassFloor1.physicsBody.min.z *= 0.85;
-    grassFloor1.physicsBody.max.z *= 1;
 
-    grassFloorList.push_back(grassFloor1);
+    for (int x = 10, z = -8; x > -18 && z < 8; x -= 4, z += 4) {
+        Wall grassFloor1 = Wall(glm::vec4(x, groudYPosition + 0.1f, z, 1.0f), glm::vec3(0.1f, 0.1f, 0.1f), true);
+        grassFloor1.physicsBody.isGrassFloor = true;
+        grassFloor1.physicsBody.isLavaFloor = false;
 
-    invisibleWallsList.push_back(grassFloor1.physicsBody);
+        grassFloor1.physicsBody.min.x -= 1.0f;
+        grassFloor1.physicsBody.max.x += 1.0f;
+        grassFloor1.physicsBody.min.z -= 0.5f;
+        grassFloor1.physicsBody.max.z += 1.0f;
+        grassFloorList.push_back(grassFloor1);
+
+        invisibleWallsList.push_back(grassFloor1.physicsBody);
+    }
+
+    for (int x = -11, z = -9; x < 17 && z < 7; x += 4, z += 4) {
+        Wall grassFloor1 = Wall(glm::vec4(x, groudYPosition + 0.1f, z, 1.0f), glm::vec3(0.1f, 0.1f, 0.1f), true);
+        grassFloor1.physicsBody.isGrassFloor = true;
+        grassFloor1.physicsBody.isLavaFloor = false;
+
+        grassFloor1.physicsBody.min.x -= 1.0f;
+        grassFloor1.physicsBody.max.x += 1.0f;
+        grassFloor1.physicsBody.min.z -= 0.5f;
+        grassFloor1.physicsBody.max.z += 1.0f;
+        grassFloorList.push_back(grassFloor1);
+
+        invisibleWallsList.push_back(grassFloor1.physicsBody);
+    }
 }
 
 void createGrassFloor(Wall grassFloor, int grassFloorID) {

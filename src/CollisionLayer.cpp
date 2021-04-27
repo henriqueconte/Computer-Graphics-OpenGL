@@ -81,7 +81,46 @@ bool CollisionLayer::isCollidingWithLava(InvisibleWall lavaFloor) {
         bool isInsideX = lavaFloor.min.x <= centerPosition.x && lavaFloor.max.x >= centerPosition.x;
         //bool isBelowY = (lavaFloor.max.y + 1.0f) >= centerPosition.y;
         bool isBelowY = true;
-        bool isInsideZ = lavaFloor.min.z >= centerPosition.z && lavaFloor.max.z <= centerPosition.z;
+        bool isInsideZ = lavaFloor.min.z <= centerPosition.z && lavaFloor.max.z >= centerPosition.z;
+        /*
+        printf("\n isInsideX: ");
+        std::cout << isInsideX;
+
+        printf("\n isInsideY: ");
+        std::cout << isBelowY;
+
+        printf("\n isInsideZ: ");
+        std::cout << isInsideZ;
+
+         printf("\n min x: ");
+         std::cout << lavaFloor.min.x;
+
+         printf("\n max x: ");
+         std::cout << lavaFloor.max.x;
+
+         printf("\n min y: ");
+         std::cout << lavaFloor.min.y;
+
+         printf("\n max y: ");
+         std::cout << lavaFloor.max.y;
+
+         printf("\n min z: ");
+         std::cout << lavaFloor.min.z;
+
+         printf("\n min z: ");
+         std::cout << lavaFloor.max.z;
+
+          printf("\n shrek x: ");
+         std::cout << centerPosition.x;
+
+         printf("\n shrek y: ");
+         std::cout << centerPosition.y;
+
+         printf("\n shrek z: ");
+         std::cout << centerPosition.z;
+
+         printf("\n \n");
+         */
         return isInsideX && isBelowY && isInsideZ;
     }
 
