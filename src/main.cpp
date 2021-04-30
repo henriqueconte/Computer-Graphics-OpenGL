@@ -55,6 +55,7 @@
 #include "CollisionLayer.h"
 #include "InvisibleWall.h"
 #include "Wall.h"
+#include "Cow.h"
 
 #define PI  3.14159265
 // Estrutura que representa um modelo geométrico carregado a partir de um
@@ -200,7 +201,8 @@ glm::vec4 cameraForwardVector;
 std::vector<Wall> wallsList;
 Wall lavaFloor = Wall(glm::vec4(0.0f, groudYPosition + 0.1f, 0.0f, 1.0f), glm::vec3(40.0f, 0.5f, 10.0f), false);
 std::vector<Wall> grassFloorList;
-Wall fence = Wall(glm::vec4(0.0f, groudYPosition, -14.0f, 1.0f), glm::vec3(1.8f, 1.3f, 1.5f), false);
+Wall fence = Wall(glm::vec4(0.0f, groudYPosition, -12.0f, 1.0f), glm::vec3(1.8f, 1.3f, 2.0f), false);
+Cow cow = Cow(glm::vec4(-10.0f, groudYPosition + 1.0f, -14.0f, 1.0f), CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f));
 
 // Funções para o jogo
 void createWall(Wall newWall, int wallID);
@@ -208,6 +210,8 @@ void createGrassFloor(Wall grassFloor, int grassFloorID);
 void setupMapWalls();
 void setupLavaFloor();
 void setupGrassFloor();
+void setupFence();
+void setupCow();
 
 // Variáveis que definem um programa de GPU (shaders). Veja função LoadShadersFromFiles().
 GLuint vertex_shader_id;
@@ -304,6 +308,7 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/lavatexture.png"); // TextureImage 4
     LoadTextureImage("../../data/grassTexture.jpg"); // TextureImage 5
     LoadTextureImage("../../data/metalTexture.jpg"); // TextureImage 6
+    LoadTextureImage("../../data/cowTexture.jpg"); // TextureImage 7
 
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
@@ -330,6 +335,10 @@ int main(int argc, char* argv[])
     ObjModel fenceModel("../../data/fence.obj");
     ComputeNormals(&fenceModel);
     BuildTrianglesAndAddToVirtualScene(&fenceModel);
+
+    ObjModel cowModel("../../data/cow.obj");
+    ComputeNormals(&cowModel);
+    BuildTrianglesAndAddToVirtualScene(&cowModel);
 
     if ( argc > 1 )
     {
@@ -477,6 +486,7 @@ int main(int argc, char* argv[])
         #define LAVA   5
         #define GRASS  6
         #define FENCE  7
+        #define COW    8
 
         // Desenhamos o modelo da esfera
         model = Matrix_Translate(-1.0f,0.0f,0.0f)
@@ -525,6 +535,16 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, FENCE);
         DrawVirtualObject("fence");
+        setupFence();
+
+        // Desenhamos a vaca
+        model = Matrix_Translate(cow.position.x, cow.position.y, cow.position.z)
+                * Matrix_Scale(1.5f, 1.5f, 1.5f)
+                * Matrix_Rotate_Y(3 * PI / 2);
+
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, COW);
+        DrawVirtualObject("cow");
 
         for (auto wall: wallsList) {
             createWall(wall, WALL);
@@ -733,6 +753,7 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(program_id, "TextureImage4"), 4);
     glUniform1i(glGetUniformLocation(program_id, "TextureImage5"), 5);
     glUniform1i(glGetUniformLocation(program_id, "TextureImage6"), 6);
+    glUniform1i(glGetUniformLocation(program_id, "TextureImage7"), 7);
     glUseProgram(0);
 }
 
@@ -1678,7 +1699,7 @@ void createWall(Wall newWall, int wallID) {
     }
 
     glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(wallModel));
-    glUniform1i(object_id_uniform, wallID); // WALL_INTERNA ou WALL
+    glUniform1i(object_id_uniform, wallID);
     DrawVirtualObject("wall");
 }
 
@@ -1755,8 +1776,22 @@ void createGrassFloor(Wall grassFloor, int grassFloorID) {
                             * Matrix_Scale(grassFloor.wallSize.x, grassFloor.wallSize.y, grassFloor.wallSize.z);
 
     glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(wallModel));
-    glUniform1i(object_id_uniform, grassFloorID); // WALL_INTERNA ou WALL
+    glUniform1i(object_id_uniform, grassFloorID);
     DrawVirtualObject("wall");
+}
+
+void setupFence() {
+    fence.physicsBody.isGrassFloor = false;
+    fence.physicsBody.isLavaFloor = false;
+    fence.physicsBody.max.x -= 3.0f;
+    fence.physicsBody.min.z -= 3.0f;
+    fence.physicsBody.min.y -= 1.0f;
+    fence.physicsBody.max.y += 1.0f;
+    invisibleWallsList.push_back(fence.physicsBody);
+}
+
+void setupCow() {
+
 }
 
 

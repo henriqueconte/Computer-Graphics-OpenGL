@@ -966,7 +966,7 @@
 	<inttypes.h>
 	<stdint.h>
 
-1611196553 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\main.cpp
+1611260095 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -2028,7 +2028,7 @@
 	<cstdarg>
 	<cstdio>
 
-1611179542 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\invisiblewall.cpp
+1611260286 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\invisiblewall.cpp
 	"InvisibleWall.h"
 
 1611097138 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\invisiblewall.h
@@ -2046,4 +2046,14 @@
 	"CollisionType.h"
 
 1610807198 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\collisiontype.h
+
+1611262041 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\cow.cpp
+	"Cow.h"
+
+1611262036 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\cow.h
+	<glm/vec4.hpp>
+	<vector>
+	<iostream>
+	"CollisionLayer.h"
+	<GLFW/glfw3.h>
 

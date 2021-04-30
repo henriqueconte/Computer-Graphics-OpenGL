@@ -27,6 +27,7 @@ uniform mat4 projection;
 #define LAVA   5
 #define GRASS  6
 #define FENCE  7
+#define COW    8
 
 uniform int object_id;
 
@@ -42,6 +43,7 @@ uniform sampler2D TextureImage3;
 uniform sampler2D TextureImage4;
 uniform sampler2D TextureImage5;
 uniform sampler2D TextureImage6;
+uniform sampler2D TextureImage7;
 
 // O valor de saída ("out") de um Fragment Shader é a cor final do fragmento.
 out vec3 color;
@@ -182,6 +184,19 @@ void main()
         U = texcoords.x;
         V = texcoords.y;
         Kd = texture(TextureImage6, vec2(U,V)).rgb;
+    } else if (object_id == COW) {
+        float minx = bbox_min.x;
+        float maxx = bbox_max.x;
+
+        float miny = bbox_min.y;
+        float maxy = bbox_max.y;
+
+        float minz = bbox_min.z;
+        float maxz = bbox_max.z;
+
+        U = (position_model.x - bbox_min.x) / (bbox_max.x - bbox_min.x);
+        V = (position_model.y - bbox_min.y) / (bbox_max.y - bbox_min.y);
+        Kd = texture(TextureImage7, vec2(U,V)).rgb;
     }
 
     // Equação de Iluminação
