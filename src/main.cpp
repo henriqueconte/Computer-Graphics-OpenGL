@@ -380,6 +380,7 @@ int main(int argc, char* argv[])
     setupLavaFloor();
     setupGrassFloor();
 
+    // Referencia: https://stackoverflow.com/questions/21339248/how-to-properly-use-mcisendstring
     mciSendString("open \"../../data/shrekSoundtrack.mp3\" type mpegvideo alias mp3", NULL, 0, NULL);
     mciSendString("play mp3 repeat", NULL, 0, NULL);
 
