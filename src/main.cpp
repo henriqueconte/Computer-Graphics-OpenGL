@@ -56,6 +56,7 @@
 #include "InvisibleWall.h"
 #include "Wall.h"
 #include "Cow.h"
+#include "Bunny.h"
 
 #define PI  3.14159265
 // Estrutura que representa um modelo geométrico carregado a partir de um
@@ -203,6 +204,7 @@ Wall lavaFloor = Wall(glm::vec4(0.0f, groudYPosition + 0.1f, 0.0f, 1.0f), glm::v
 std::vector<Wall> grassFloorList;
 Wall fence = Wall(glm::vec4(0.0f, groudYPosition, -12.0f, 1.0f), glm::vec3(1.8f, 1.3f, 2.0f), false);
 Cow cow = Cow(glm::vec4(-10.0f, groudYPosition + 1.0f, -14.0f, 1.0f), CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f));
+Bunny bunny = Bunny(glm::vec4(0.0f, groudYPosition + 1.0f, 14.0f, 1.0f), CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f));
 
 // Funções para o jogo
 void createWall(Wall newWall, int wallID);
@@ -212,6 +214,7 @@ void setupLavaFloor();
 void setupGrassFloor();
 void setupFence();
 void setupCow();
+void setupBunny();
 
 // Variáveis que definem um programa de GPU (shaders). Veja função LoadShadersFromFiles().
 GLuint vertex_shader_id;
@@ -309,6 +312,7 @@ int main(int argc, char* argv[])
     LoadTextureImage("../../data/grassTexture.jpg"); // TextureImage 5
     LoadTextureImage("../../data/metalTexture.jpg"); // TextureImage 6
     LoadTextureImage("../../data/cowTexture.jpg"); // TextureImage 7
+    LoadTextureImage("../../data/neonTexture.jpg"); // TextureImage 8
 
 
     // Construímos a representação de objetos geométricos através de malhas de triângulos
@@ -377,7 +381,7 @@ int main(int argc, char* argv[])
         // Conversaremos sobre sistemas de cores nas aulas de Modelos de Iluminação.
         //
         //           R     G     B     A
-        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClearColor((float)247/255, (float)146/255, (float)146/255, 1.0f);
 
         // "Pintamos" todos os pixels do framebuffer com a cor definida acima,
         // e também resetamos todos os pixels do Z-buffer (depth buffer).
@@ -479,7 +483,7 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(projection_uniform , 1 , GL_FALSE , glm::value_ptr(projection));
 
         #define SPHERE 0
-        #define BURRO  1
+        #define BUNNY  1
         #define PLANE  2
         #define SHREK  3
         #define WALL   4
@@ -488,21 +492,7 @@ int main(int argc, char* argv[])
         #define FENCE  7
         #define COW    8
 
-        // Desenhamos o modelo da esfera
-        model = Matrix_Translate(-1.0f,0.0f,0.0f)
-              * Matrix_Rotate_Z(0.6f)
-              * Matrix_Rotate_X(0.2f)
-              * Matrix_Rotate_Y(g_AngleY + (float)glfwGetTime() * 0.1f);
-        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(object_id_uniform, SPHERE);
-        DrawVirtualObject("sphere");
-
-        // Desenhamos o modelo do coelho
-        model = Matrix_Translate(1.0f,0.0f,0.0f)
-              * Matrix_Rotate_X(g_AngleX + (float)glfwGetTime() * 0.1f);
-        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
-        glUniform1i(object_id_uniform, BURRO);
-        DrawVirtualObject("bunny");
+        setupBunny();
 
         // Desenhamos o plano do chão
         model = Matrix_Translate(0.0f,groudYPosition,0.0f)
@@ -580,8 +570,12 @@ int main(int argc, char* argv[])
         if (cow.shouldMove) {
             cow.bezierMove();
         } else if (shrek.hasTouchedCow(cow)) {
-            shrek.position.y += 0.3;
             cow.shouldMove = true;
+            bunny.isHidden = false;
+        }
+        if (shrek.hasTouchedBunny(bunny)) {
+            bunny.hasBeenTouched = true;
+            shrek.canMove = false;
         }
         // Pegamos um vértice com coordenadas de modelo (0.5, 0.5, 0.5, 1) e o
         // passamos por todos os sistemas de coordenadas armazenados nas
@@ -761,6 +755,7 @@ void LoadShadersFromFiles()
     glUniform1i(glGetUniformLocation(program_id, "TextureImage5"), 5);
     glUniform1i(glGetUniformLocation(program_id, "TextureImage6"), 6);
     glUniform1i(glGetUniformLocation(program_id, "TextureImage7"), 7);
+    glUniform1i(glGetUniformLocation(program_id, "TextureImage8"), 8);
     glUseProgram(0);
 }
 
@@ -1799,6 +1794,25 @@ void setupFence() {
 
 void setupCow() {
     cow.collisionLayer.centerPosition = cow.position;
+}
+
+void setupBunny() {
+    if (bunny.isHidden == false) {
+            // Desenhamos o modelo do coelho
+        glm::mat4 model = Matrix_Identity();
+        model = Matrix_Translate(bunny.position.x,bunny.position.y,bunny.position.z)
+                * Matrix_Rotate_Y(PI);
+
+        if (bunny.hasBeenTouched) {
+            model *= Matrix_Rotate_Z(g_AngleZ + (float)glfwGetTime() * 0.5f)
+                     * Matrix_Rotate_X(g_AngleX + (float)glfwGetTime() * 0.5f);
+        }
+
+        glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
+        glUniform1i(object_id_uniform, BUNNY);
+        DrawVirtualObject("bunny");
+        bunny.collisionLayer.centerPosition = bunny.position;
+    }
 }
 
 // set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null

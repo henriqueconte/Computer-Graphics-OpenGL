@@ -7,6 +7,7 @@
 #include "InvisibleWall.h"
 #include <GLFW/glfw3.h>
 #include "Cow.h"
+#include "Bunny.h"
 
 class Shrek
 {
@@ -19,12 +20,14 @@ class Shrek
         float jumpHeight;
         bool isGoingUp;
         bool isAboveGrass;
+        bool canMove;
 
         Shrek();
         Shrek(glm::vec4 pos, CollisionLayer collisionLay);
 
         void move(std::vector<InvisibleWall> invisibleWallList, glm::vec4 movementDelta);
         bool hasTouchedCow(Cow cow);
+        bool hasTouchedBunny(Bunny bunny);
 };
 
 #endif // SHREK_H

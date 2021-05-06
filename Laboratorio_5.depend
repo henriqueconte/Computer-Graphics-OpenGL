@@ -966,7 +966,7 @@
 	<inttypes.h>
 	<stdint.h>
 
-1611272080 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\main.cpp
+1611334432 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -995,6 +995,7 @@
 	"InvisibleWall.h"
 	"Wall.h"
 	"Cow.h"
+	"Bunny.h"
 
 1603713706 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\glfw\glfw3.h
 	<stddef.h>
@@ -1899,10 +1900,10 @@
 	<iostream>
 	"InvisibleWall.h"
 
-1611266792 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\shrek.cpp
+1611334580 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\shrek.cpp
 	"Shrek.h"
 
-1611265856 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\shrek.h
+1611334580 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\shrek.h
 	<glm/vec4.hpp>
 	<vector>
 	<iostream>
@@ -1910,6 +1911,7 @@
 	"InvisibleWall.h"
 	<GLFW/glfw3.h>
 	"Cow.h"
+	"Bunny.h"
 
 1603713706 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\glm\gtx\string_cast.hpp
 	"../glm.hpp"
@@ -2049,10 +2051,23 @@
 
 1610807198 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\collisiontype.h
 
-1611272054 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\cow.cpp
+1611276023 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\cow.cpp
 	"Cow.h"
 
-1611272546 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\cow.h
+1611276482 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\cow.h
+	<glm/vec4.hpp>
+	<vector>
+	<iostream>
+	"CollisionLayer.h"
+	<GLFW/glfw3.h>
+	<cmath>
+	<cstdio>
+	<cstdlib>
+
+1611332633 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\bunny.cpp
+	"Bunny.h"
+
+1611332633 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\bunny.h
 	<glm/vec4.hpp>
 	<vector>
 	<iostream>
