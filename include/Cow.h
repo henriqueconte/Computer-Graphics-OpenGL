@@ -5,6 +5,10 @@
 #include <iostream>
 #include "CollisionLayer.h"
 #include <GLFW/glfw3.h>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+
 
 class Cow
 {
@@ -13,6 +17,9 @@ class Cow
         Cow(glm::vec4 pos, CollisionLayer collisionLay);
         glm::vec4 position;
         CollisionLayer collisionLayer;
+        bool shouldMove;
+        void bezierMove();
+        glm::vec4 originalPosition;
 };
 
 #endif // COW_H

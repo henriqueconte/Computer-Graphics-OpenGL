@@ -966,7 +966,7 @@
 	<inttypes.h>
 	<stdint.h>
 
-1611260095 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\main.cpp
+1611272080 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\main.cpp
 	<cmath>
 	<cstdio>
 	<cstdlib>
@@ -994,6 +994,7 @@
 	"CollisionLayer.h"
 	"InvisibleWall.h"
 	"Wall.h"
+	"Cow.h"
 
 1603713706 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\glfw\glfw3.h
 	<stddef.h>
@@ -1889,25 +1890,26 @@
 1603713706 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\tiny_obj_loader.cpp
 	"tiny_obj_loader.h"
 
-1611180630 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\collisionlayer.cpp
+1611267437 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\collisionlayer.cpp
 	"CollisionLayer.h"
 
-1611090802 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\collisionlayer.h
+1611265792 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\collisionlayer.h
 	<glm/vec4.hpp>
 	<cmath>
 	<iostream>
 	"InvisibleWall.h"
 
-1611194975 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\shrek.cpp
+1611266792 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\shrek.cpp
 	"Shrek.h"
 
-1611105528 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\shrek.h
+1611265856 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\shrek.h
 	<glm/vec4.hpp>
 	<vector>
 	<iostream>
 	"CollisionLayer.h"
 	"InvisibleWall.h"
 	<GLFW/glfw3.h>
+	"Cow.h"
 
 1603713706 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\glm\gtx\string_cast.hpp
 	"../glm.hpp"
@@ -2047,13 +2049,16 @@
 
 1610807198 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\collisiontype.h
 
-1611262041 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\cow.cpp
+1611272054 source:c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\src\cow.cpp
 	"Cow.h"
 
-1611262036 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\cow.h
+1611272546 c:\users\jorge luiz\desktop\ufrgs\quinto semestre\fcg\fundamentals-of-computer-graphics\finalproject\include\cow.h
 	<glm/vec4.hpp>
 	<vector>
 	<iostream>
 	"CollisionLayer.h"
 	<GLFW/glfw3.h>
+	<cmath>
+	<cstdio>
+	<cstdlib>
 

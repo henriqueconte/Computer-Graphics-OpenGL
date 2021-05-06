@@ -6,6 +6,7 @@
 #include "CollisionLayer.h"
 #include "InvisibleWall.h"
 #include <GLFW/glfw3.h>
+#include "Cow.h"
 
 class Shrek
 {
@@ -23,6 +24,7 @@ class Shrek
         Shrek(glm::vec4 pos, CollisionLayer collisionLay);
 
         void move(std::vector<InvisibleWall> invisibleWallList, glm::vec4 movementDelta);
+        bool hasTouchedCow(Cow cow);
 };
 
 #endif // SHREK_H

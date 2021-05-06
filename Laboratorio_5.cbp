@@ -104,6 +104,7 @@
 			<Add directory="lib" />
 		</Linker>
 		<Unit filename="include/CollisionLayer.h" />
+		<Unit filename="include/Cow.h" />
 		<Unit filename="include/GLFW/glfw3.h" />
 		<Unit filename="include/GLFW/glfw3native.h" />
 		<Unit filename="include/InvisibleWall.h" />
@@ -379,6 +380,7 @@
 		<Unit filename="include/tiny_obj_loader.h" />
 		<Unit filename="include/utils.h" />
 		<Unit filename="src/CollisionLayer.cpp" />
+		<Unit filename="src/Cow.cpp" />
 		<Unit filename="src/InvisibleWall.cpp" />
 		<Unit filename="src/Shrek.cpp" />
 		<Unit filename="src/Wall.cpp" />

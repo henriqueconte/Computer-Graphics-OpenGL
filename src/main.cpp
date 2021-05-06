@@ -194,7 +194,7 @@ bool g_ShowInfoText = true;
 // Variáveis para o jogo
 float groudYPosition = -1.0f;
 std::vector<InvisibleWall> invisibleWallsList;
-Shrek shrek(Shrek().shrekOriginalPosition, CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 2.0f));
+Shrek shrek(Shrek().shrekOriginalPosition, CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f));
 glm::vec4 camera_up_vector;
 glm::vec4 cameraRightVector;
 glm::vec4 cameraForwardVector;
@@ -545,6 +545,7 @@ int main(int argc, char* argv[])
         glUniformMatrix4fv(model_uniform, 1 , GL_FALSE , glm::value_ptr(model));
         glUniform1i(object_id_uniform, COW);
         DrawVirtualObject("cow");
+        setupCow();
 
         for (auto wall: wallsList) {
             createWall(wall, WALL);
@@ -576,6 +577,12 @@ int main(int argc, char* argv[])
             }
         }
 
+        if (cow.shouldMove) {
+            cow.bezierMove();
+        } else if (shrek.hasTouchedCow(cow)) {
+            shrek.position.y += 0.3;
+            cow.shouldMove = true;
+        }
         // Pegamos um vértice com coordenadas de modelo (0.5, 0.5, 0.5, 1) e o
         // passamos por todos os sistemas de coordenadas armazenados nas
         // matrizes the_model, the_view, e the_projection; e escrevemos na tela
@@ -1791,10 +1798,8 @@ void setupFence() {
 }
 
 void setupCow() {
-
+    cow.collisionLayer.centerPosition = cow.position;
 }
-
-
 
 // set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null
 // vim: set spell spelllang=pt_br :

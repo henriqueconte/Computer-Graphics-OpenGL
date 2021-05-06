@@ -18,15 +18,12 @@ bool CollisionLayer::isCollidingWithWall(InvisibleWall wall) {
     float y = std::max(wall.min.y, std::min(centerPosition.y, wall.max.y));
     float z = std::max(wall.min.z, std::min(centerPosition.z, wall.max.z));
 
-    float distance = std::sqrt(
-                            (x - centerPosition.x) * (x - centerPosition.x)
-                            +
-                            (y - centerPosition.y) * (y - centerPosition.y)
-                            +
-                            (z - centerPosition.z) * (z - centerPosition.z)
-    );
+    float currentDistance = std::sqrt(
+                            (x - centerPosition.x) * (x - centerPosition.x) +
+                            (y - centerPosition.y) * (y - centerPosition.y) +
+                            (z - centerPosition.z) * (z - centerPosition.z));
 
-    return distance < collisionRadius;
+    return currentDistance < collisionRadius;
 }
 
 // Colisão ponto -> plano
@@ -123,5 +120,13 @@ bool CollisionLayer::isCollidingWithLava(InvisibleWall lavaFloor) {
          */
         return isInsideX && isBelowY && isInsideZ;
     }
+}
 
+// Colisão esfera -> esfera
+bool CollisionLayer::isCollidingWithCollisionLayer(CollisionLayer collisionLayer) {
+    float currentDistance = std::sqrt(
+                            (centerPosition.x - collisionLayer.centerPosition.x) * (centerPosition.x - collisionLayer.centerPosition.x) +
+                            (centerPosition.y - collisionLayer.centerPosition.y) * (centerPosition.y - collisionLayer.centerPosition.y) +
+                            (centerPosition.z - collisionLayer.centerPosition.z) * (centerPosition.z - collisionLayer.centerPosition.z));
+    return currentDistance < (collisionRadius + collisionLayer.collisionRadius);
 }

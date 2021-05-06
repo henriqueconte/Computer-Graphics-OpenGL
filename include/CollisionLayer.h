@@ -15,6 +15,7 @@ class CollisionLayer
         CollisionLayer(glm::vec4 centerPos, float collisionRad);
         bool isCollidingWithWall(InvisibleWall wall);
         bool isCollidingWithLava(InvisibleWall lavaFloor);
+        bool isCollidingWithCollisionLayer(CollisionLayer collisionLayer);
 };
 
 #endif // COLLISIONLAYER_H
