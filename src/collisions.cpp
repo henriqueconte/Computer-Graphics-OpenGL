@@ -1,5 +1,6 @@
 #include "collisions.h"
 
+// Codigo baseado no link https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_collision_detection
 CollisionLayer::CollisionLayer()
 {
     centerPosition = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
