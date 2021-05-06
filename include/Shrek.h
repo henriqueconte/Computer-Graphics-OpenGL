@@ -3,7 +3,7 @@
 #include <glm/vec4.hpp>
 #include <vector>
 #include <iostream>
-#include "CollisionLayer.h"
+#include "collisions.h"
 #include "InvisibleWall.h"
 #include <GLFW/glfw3.h>
 #include "Cow.h"

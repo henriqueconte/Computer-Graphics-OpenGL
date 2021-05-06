@@ -15,6 +15,7 @@ Cow::Cow(glm::vec4 pos, CollisionLayer collisionLay) {
     originalPosition = position;
 }
 
+// Implementação da curva de bezier aplicada à vaca
 void Cow::bezierMove() {
 
     glm::vec4 p0 = glm::vec4(0.0f,0.0f,-0.1f, 1.0f);

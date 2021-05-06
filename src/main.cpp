@@ -52,11 +52,16 @@
 #include "matrices.h"
 
 #include "Shrek.h"
-#include "CollisionLayer.h"
+#include "collisions.h"
 #include "InvisibleWall.h"
 #include "Wall.h"
 #include "Cow.h"
 #include "Bunny.h"
+#include <Mmsystem.h>
+#include <MMsystem.h>
+//#include <mciapi.h>
+//these two headers are already included in the <Windows.h> header
+#pragma comment(lib, "Winmm.lib")
 
 #define PI  3.14159265
 // Estrutura que representa um modelo geométrico carregado a partir de um
@@ -190,7 +195,7 @@ float g_TorsoPositionY = 0.0f;
 bool g_UsePerspectiveProjection = true;
 
 // Variável que controla se o texto informativo será mostrado na tela.
-bool g_ShowInfoText = true;
+bool g_ShowInfoText = false;
 
 // Variáveis para o jogo
 float groudYPosition = -1.0f;
@@ -206,6 +211,8 @@ Wall fence = Wall(glm::vec4(0.0f, groudYPosition, -12.0f, 1.0f), glm::vec3(1.8f,
 Cow cow = Cow(glm::vec4(-10.0f, groudYPosition + 1.0f, -14.0f, 1.0f), CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f));
 Bunny bunny = Bunny(glm::vec4(0.0f, groudYPosition + 1.0f, 14.0f, 1.0f), CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f));
 bool isCameraLookAt = false;
+float timeStart = glfwGetTime();
+float timeDelta = glfwGetTime() - timeStart;
 
 // Funções para o jogo
 void createWall(Wall newWall, int wallID);
@@ -216,6 +223,7 @@ void setupGrassFloor();
 void setupFence();
 void setupCow();
 void setupBunny();
+void showEndText(GLFWwindow* window);
 
 // Variáveis que definem um programa de GPU (shaders). Veja função LoadShadersFromFiles().
 GLuint vertex_shader_id;
@@ -371,6 +379,10 @@ int main(int argc, char* argv[])
     setupMapWalls();
     setupLavaFloor();
     setupGrassFloor();
+
+    mciSendString("open \"../../data/shrekSoundtrack.mp3\" type mpegvideo alias mp3", NULL, 0, NULL);
+    mciSendString("play mp3 repeat", NULL, 0, NULL);
+
     // Ficamos em loop, renderizando, até que o usuário feche a janela
     while (!glfwWindowShouldClose(window))
     {
@@ -403,9 +415,11 @@ int main(int argc, char* argv[])
 
         float maxPhi = PI/2 - 0.01f;
         float minPhi = 0;
-        float cameraMinDist = 2 * shrek.collisionLayer.collisionRadius;
+        float cameraMinDist = 0;
         float cameraMaxDist = 5 * shrek.collisionLayer.collisionRadius;
 
+        timeDelta = ((float)glfwGetTime() - timeStart) * 65;
+        timeStart = glfwGetTime();
 
         if (maxPhi < g_CameraPhi) {
             g_CameraPhi = maxPhi;
@@ -423,17 +437,13 @@ int main(int argc, char* argv[])
 
         // Abaixo definimos as varáveis que efetivamente definem a câmera virtual.
         // Veja slides 195-227 e 229-234 do documento Aula_08_Sistemas_de_Coordenadas.pdf.
-        bool isCameraColliding = false;
         glm::vec4 camera_position_c  = shrek.position + glm::vec4(x,y+1.0f,z,0.0f);
         glm::vec4 camera_lookat_l    = shrek.position + glm::vec4(0.0f,1.0f,0.0f,0.0f);//glm::vec4(0.0f,1.0f,0.0f,1.0f);
         glm::vec4 camera_view_vector = glm::vec4(0.0f,0.0f,0.0f,0.0f);
         float cameraPrecision = 25.0f;
         glm::vec4 viewDirection = (camera_lookat_l - camera_position_c) / cameraPrecision;
 
-        for (float i = 1.0f; i <= cameraPrecision && isCameraColliding == false; i += 1.0f) {
-            for (auto wall: invisibleWallsList) {
-                // fazer algo caso a câmera bata na parede
-            }
+        for (float i = 1.0f; i <= cameraPrecision; i += 1.0f) {
             camera_view_vector += viewDirection;
         }
         camera_position_c = camera_lookat_l - camera_view_vector;
@@ -554,37 +564,43 @@ int main(int argc, char* argv[])
             createGrassFloor(grassFloor, GRASS);
         }
 
+        // Loop para pulo do shrek, checando colisões
         if (shrek.isJumping) {
             if (shrek.isGoingUp) {
                 std::vector<InvisibleWall> noWalls;
-                shrek.move(noWalls, glm::vec4(camera_up_vector.x, camera_up_vector.y * 0.22, camera_up_vector.z, camera_up_vector.w));
+                shrek.move(noWalls,timeDelta * glm::vec4(camera_up_vector.x, camera_up_vector.y * 0.22, camera_up_vector.z, camera_up_vector.w));
 
                 if (shrek.position.y >= shrek.beforeJumpYPosition + shrek.jumpHeight) {
                     shrek.isGoingUp = false;
                 }
             } else {
                 std::vector<InvisibleWall> noWalls;
-                shrek.move(noWalls, glm::vec4(camera_up_vector.x, -camera_up_vector.y * 0.22, camera_up_vector.z, camera_up_vector.w));
+                shrek.move(noWalls, timeDelta * glm::vec4(camera_up_vector.x, -camera_up_vector.y * 0.22, camera_up_vector.z, camera_up_vector.w));
 
                 if (shrek.position.y <= shrek.beforeJumpYPosition) {
                     shrek.isJumping = false;
+                    shrek.position.y = shrek.beforeJumpYPosition;
                     if (shrek.isAboveGrass == false) {
-                        shrek.move(invisibleWallsList, glm::vec4(0, 0, 0, 0));
+                        shrek.move(invisibleWallsList, timeDelta * glm::vec4(0, 0, 0, 0));
                     }
 
                 }
             }
         }
 
+        // Se a vaca pode se mexer, ela deve se mexer com curva de bezier!
         if (cow.shouldMove) {
             cow.bezierMove();
         } else if (shrek.hasTouchedCow(cow)) {
             cow.shouldMove = true;
             bunny.isHidden = false;
         }
-        if (shrek.hasTouchedBunny(bunny)) {
+
+        // Condição de fim de jogo
+        if (shrek.hasTouchedBunny(bunny) && bunny.isHidden == false) {
             bunny.hasBeenTouched = true;
             shrek.canMove = false;
+            showEndText(window);
         }
         // Pegamos um vértice com coordenadas de modelo (0.5, 0.5, 0.5, 1) e o
         // passamos por todos os sistemas de coordenadas armazenados nas
@@ -1236,8 +1252,8 @@ void CursorPosCallback(GLFWwindow* window, double xpos, double ypos)
     if (g_LeftMouseButtonPressed)
     {
         // Deslocamento do cursor do mouse em x e y de coordenadas de tela!
-        float dx = xpos - g_LastCursorPosX;
-        float dy = ypos - g_LastCursorPosY;
+        float dx = timeDelta * (xpos - g_LastCursorPosX);
+        float dy = timeDelta * (ypos - g_LastCursorPosY);
 
         // Atualizamos parâmetros da câmera com os deslocamentos
         g_CameraTheta -= 0.01f*dx;
@@ -1299,7 +1315,7 @@ void ScrollCallback(GLFWwindow* window, double xoffset, double yoffset)
 {
     // Atualizamos a distância da câmera para a origem utilizando a
     // movimentação da "rodinha", simulando um ZOOM.
-    g_CameraDistance -= 0.1f*yoffset;
+    g_CameraDistance -= timeDelta * (0.1f*yoffset);
 
     // Uma câmera look-at nunca pode estar exatamente "em cima" do ponto para
     // onde ela está olhando, pois isto gera problemas de divisão por zero na
@@ -1377,25 +1393,28 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
         fflush(stdout);
     }
 
+    // Controle da movimentação do shrek
     if (key == GLFW_KEY_W) {
-        shrek.move(invisibleWallsList, cameraForwardVector);
+        shrek.move(invisibleWallsList, timeDelta * cameraForwardVector);
     } else if (key == GLFW_KEY_S) {
-        shrek.move(invisibleWallsList, -cameraForwardVector);
+        shrek.move(invisibleWallsList, timeDelta * -cameraForwardVector);
     } else if (key == GLFW_KEY_A) {
-        shrek.move(invisibleWallsList, -cameraRightVector);
+        shrek.move(invisibleWallsList, timeDelta * -cameraRightVector);
     } else if (key == GLFW_KEY_D) {
-        shrek.move(invisibleWallsList, cameraRightVector);
+        shrek.move(invisibleWallsList, timeDelta * cameraRightVector);
     }
 
+    // Pulo do shrek
     if (key == GLFW_KEY_SPACE && action == GLFW_RELEASE) {
         if (shrek.isJumping == false) {
-            shrek.beforeJumpYPosition = shrek.position.y;
+            shrek.beforeJumpYPosition = shrek.shrekOriginalPosition.y;
             shrek.isJumping = true;
             shrek.isGoingUp = true;
             shrek.isAboveGrass = false;
         }
     }
 
+    // Alterna câmera entre look_at e câmera livre
     if (key == GLFW_KEY_L && action == GLFW_RELEASE) {
         isCameraLookAt = !isCameraLookAt;
     }
@@ -1704,6 +1723,7 @@ void PrintObjModelInfo(ObjModel* model)
   }
 }
 
+// Instancia uma parede no mapa de acordo com os parâmetros enviados
 void createWall(Wall newWall, int wallID) {
     glm::mat4 wallModel = Matrix_Translate(newWall.position.x, newWall.position.y, newWall.position.z);
     if (newWall.wallSize.z > newWall.wallSize.x) {
@@ -1718,6 +1738,7 @@ void createWall(Wall newWall, int wallID) {
     DrawVirtualObject("wall");
 }
 
+// Cria os modelos das paredes e de seus corpos físicos
 void setupMapWalls() {
     // Front walls
     for(float i = -20.0f; i < 15.0f; i += 10.0f) {
@@ -1742,6 +1763,7 @@ void setupMapWalls() {
     }
 }
 
+// Configura o modelo da lava
 void setupLavaFloor() {
     lavaFloor.physicsBody.isLavaFloor = true;
     lavaFloor.physicsBody.isGrassFloor = false;
@@ -1752,6 +1774,7 @@ void setupLavaFloor() {
     invisibleWallsList.push_back(lavaFloor.physicsBody);
 }
 
+// Configura o modelo da grama
 void setupGrassFloor() {
 
     for (int x = 10, z = -8; x > -18 && z < 8; x -= 4, z += 4) {
@@ -1783,6 +1806,7 @@ void setupGrassFloor() {
     }
 }
 
+// Instancia uma grama de acordo com os parâmetros enviados
 void createGrassFloor(Wall grassFloor, int grassFloorID) {
     glm::mat4 wallModel = Matrix_Translate(grassFloor.position.x, grassFloor.position.y, grassFloor.position.z)
                             * Matrix_Rotate_Z(PI / 2)
@@ -1795,6 +1819,7 @@ void createGrassFloor(Wall grassFloor, int grassFloorID) {
     DrawVirtualObject("wall");
 }
 
+// Configura o modelo da cerca
 void setupFence() {
     fence.physicsBody.isGrassFloor = false;
     fence.physicsBody.isLavaFloor = false;
@@ -1805,10 +1830,12 @@ void setupFence() {
     invisibleWallsList.push_back(fence.physicsBody);
 }
 
+// Configura o modelo da vaca
 void setupCow() {
     cow.collisionLayer.centerPosition = cow.position;
 }
 
+// Configura o modelo do coelho
 void setupBunny() {
     if (bunny.isHidden == false) {
             // Desenhamos o modelo do coelho
@@ -1826,6 +1853,16 @@ void setupBunny() {
         DrawVirtualObject("bunny");
         bunny.collisionLayer.centerPosition = bunny.position;
     }
+}
+
+// Fim de jogo
+void showEndText(GLFWwindow* window) {
+    float pad = TextRendering_LineHeight(window);
+
+    char buffer[80];
+    snprintf(buffer, 80, "Fim de jogo :) \n Aperte L e aprecie a beleza deste coelho neon!");
+
+    TextRendering_PrintString(window, buffer, -0.95f+pad/5, -0.7f+2*pad/5, 1.5f);
 }
 
 // set makeprg=cd\ ..\ &&\ make\ run\ >/dev/null

@@ -35,63 +35,23 @@ void Shrek::move(std::vector<InvisibleWall> invisibleWallList, glm::vec4 movemen
         collisionLayer.centerPosition = newPosition;
         isAboveGrass = false;
 
+        // Checa se está em cima de uma grama ou lava
         for (auto wall: invisibleWallList) {
             if (collisionLayer.isCollidingWithLava(wall) && wall.isGrassFloor) {
-                 printf("is colliding with grass");
-                 //willCollide = true;
                  isAboveGrass = true;
-                 //position = shrekOriginalPosition;
-
-                /*
-                     printf("\n shrek x position: ");
-                     std::cout << position.x;
-
-                     printf("\n shrek y position: ");
-                     std::cout << position.y;
-
-                     printf("\n shrek z position: ");
-                     std::cout << position.z;
-
-                      printf("\n COLLISION x position: ");
-                     std::cout << collisionLayer.centerPosition.x;
-
-                     printf("\n COLLISION y position: ");
-                     std::cout << collisionLayer.centerPosition.y;
-
-                     printf("\n COLLISION z position: ");
-                     std::cout << collisionLayer.centerPosition.z;
-
-                     printf("\n min x: ");
-                     std::cout << wall.min.x;
-
-                     printf("\n max x: ");
-                     std::cout << wall.max.x;
-
-                     printf("\n min y: ");
-                     std::cout << wall.min.y;
-
-                     printf("\n max y: ");
-                     std::cout << wall.max.y;
-
-                     printf("\n min z: ");
-                     std::cout << wall.min.z;
-
-                     printf("\n max z: ");
-                     std::cout << wall.max.z;
-                */
                  break;
             }
         }
         if (isAboveGrass == false) {
+            // Checa se está colidindo com alguma parede
             for (auto wall : invisibleWallList) {
                 if (collisionLayer.isCollidingWithWall(wall) && wall.isLavaFloor == false && wall.isGrassFloor == false) {
                     willCollide = true;
                     break;
                 } else if (collisionLayer.isCollidingWithLava(wall) && wall.isLavaFloor) {
-                     printf("is colliding with lava");
-                     willCollide = true;
-                     position = shrekOriginalPosition;
-                     break;
+                    willCollide = true;
+                    position = shrekOriginalPosition;
+                    break;
                  }
             }
         }
@@ -105,10 +65,12 @@ void Shrek::move(std::vector<InvisibleWall> invisibleWallList, glm::vec4 movemen
     }
 }
 
+// Checa se colidiu com vaca
 bool Shrek::hasTouchedCow(Cow cow) {
     return collisionLayer.isCollidingWithCollisionLayer(cow.collisionLayer);
 }
 
+// Checa se tocou no coelho
 bool Shrek::hasTouchedBunny(Bunny bunny) {
     return collisionLayer.isCollidingWithCollisionLayer(bunny.collisionLayer);
 }
