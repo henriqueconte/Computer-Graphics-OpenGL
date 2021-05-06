@@ -205,6 +205,7 @@ std::vector<Wall> grassFloorList;
 Wall fence = Wall(glm::vec4(0.0f, groudYPosition, -12.0f, 1.0f), glm::vec3(1.8f, 1.3f, 2.0f), false);
 Cow cow = Cow(glm::vec4(-10.0f, groudYPosition + 1.0f, -14.0f, 1.0f), CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f));
 Bunny bunny = Bunny(glm::vec4(0.0f, groudYPosition + 1.0f, 14.0f, 1.0f), CollisionLayer(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f), 1.0f));
+bool isCameraLookAt = false;
 
 // Funções para o jogo
 void createWall(Wall newWall, int wallID);
@@ -441,6 +442,14 @@ int main(int argc, char* argv[])
         cameraRightVector = crossproduct(camera_view_vector, camera_up_vector) / norm(crossproduct(camera_view_vector, camera_up_vector)); // Vetor "right", direcao a direita da camera no plano XZ
         cameraForwardVector = crossproduct(-cameraRightVector, camera_up_vector) / norm(crossproduct(-cameraRightVector, camera_up_vector)); // Vetor "forward", direcao a frente da camera no plano XZ
 
+        if (isCameraLookAt) {
+            camera_position_c = glm::vec4(x, y, z, 1.0f);
+            camera_lookat_l = glm::vec4(0.0f, 0.0f, 0.0f, 1.0f);
+            camera_view_vector = camera_lookat_l - camera_position_c;
+            bunny.position = glm::vec4(0.0f, 0.5f, 0.0f, 1.0f);
+        } else {
+            bunny.position = glm::vec4(0.0f, groudYPosition + 1.0f, 14.0f, 1.0f);
+        }
         // Computamos a matriz "View" utilizando os parâmetros da câmera para
         // definir o sistema de coordenadas da câmera.  Veja slides 2-14, 184-190 e 236-242 do documento Aula_08_Sistemas_de_Coordenadas.pdf.
         glm::mat4 view = Matrix_Camera_View(camera_position_c, camera_view_vector, camera_up_vector);
@@ -1385,6 +1394,10 @@ void KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mod)
             shrek.isGoingUp = true;
             shrek.isAboveGrass = false;
         }
+    }
+
+    if (key == GLFW_KEY_L && action == GLFW_RELEASE) {
+        isCameraLookAt = !isCameraLookAt;
     }
 }
 
