@@ -1,5 +1,12 @@
 # Computer-Graphics-OpenGL
 
+This game was made to implement concepts of Computer Graphics in Open GL. 
+
+![Initial screen](print1.png)
+
+![Cow](print2.png)
+
+
 === Windows
 ==================================
 To compile and run this project on Windows, download IDE Code::Blocks from
