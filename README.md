@@ -1,6 +1,6 @@
 # Computer-Graphics-OpenGL
 
-This game was made to implement concepts of Computer Graphics in Open GL. 
+This game was made to implement concepts of Computer Graphics in Open GL, and a demo is available at https://www.youtube.com/watch?v=RK_Xjtuthv0&t=107s.
 
 ![Initial screen](print1.png)
 
